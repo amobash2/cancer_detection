@@ -15,4 +15,4 @@ data/
 
 all_labels.csv containes list of all file names with corresponding correct label. 
 * The file contains two columns "id" and "label". 
-* Where "id" columns contains image1, image2 and label can be 0 (cancer not detected) and 1 (metastatic cancer is detected).
+* Where "id" columns contains image1, image2 and label can be 0 (cancer not detected) or 1 (metastatic cancer is detected).
