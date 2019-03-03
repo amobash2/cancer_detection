@@ -5,7 +5,7 @@ In this github we open-source a pytorch pipeline we have developed for transfer 
 In metastatic cancer (also known as stage IV of cancer), cancer cells can spread to distant parts of the body and in some situations, experts might not be able to identify where the cancer initially started. Once cancer expands, it can be hard to control, however there are still treatments that can stop, slow the growth of cancer or relieve symptoms caused by cancer.
 
 ## PCam Dataset
-We are using [PCam dataset](https://github.com/basveeling/pcam) to train/validate/test our models for metastatic cancer detection. [PCam dataset](https://github.com/basveeling/pcam) consists of 327,680 color images (96 x 96px) which contains repetition. A cleaned version of PCam dataset is available in a [Kaggel competition](https://www.kaggle.com/c/histopathologic-cancer-detection/data). PCam dataset casts metastatic cancer detection as an image classification task.
+We are using [PCam dataset](https://github.com/basveeling/pcam) to train/validate/test our models for metastatic cancer detection. [PCam dataset](https://github.com/basveeling/pcam) consists of 327,680 color images (96 x 96px) which contains duplicate images. A cleaned version of PCam dataset is available in a [Kaggel competition](https://www.kaggle.com/c/histopathologic-cancer-detection/data). PCam dataset casts metastatic cancer detection as an image classification task.
 
 ![alt text](https://github.com/basveeling/pcam/blob/master/pcam.jpg "PCam image samples - image is copied from PCam github")
 
