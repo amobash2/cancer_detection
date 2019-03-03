@@ -7,7 +7,7 @@ In metastatic cancer (also known as stage IV of cancer), cancer cells can spread
 ## PCam Dataset
 We are using [PCam dataset](https://github.com/basveeling/pcam) to train/validate/test our models for metastatic cancer detection. [PCam dataset](https://github.com/basveeling/pcam) consists of 327,680 color images (96 x 96px) which contains repetition. A cleaned version of PCam dataset is available in a [Kaggel competition](https://www.kaggle.com/c/histopathologic-cancer-detection/data). PCam dataset casts metastatic cancer detection as an image classification task.
 
-![alt text](https://github.com/basveeling/pcam/blob/master/pcam.jpg "PCam image samples")
+![alt text](https://github.com/basveeling/pcam/blob/master/pcam.jpg "PCam image samples - image is copied from PCam github")
 
 We randomly select 1000 images from PCam dataset for testing and report all measurements on selected data. We divide remainder of data into 90% training and 10% validation. We have not observed any noticable difference using 75% training and 25% validation, however we are open to share our pretrained models in both scenarios.
 
