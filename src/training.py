@@ -18,11 +18,15 @@ class training(object):
 
         # Data loader
         self.data_loader = data_loader
+        self.device = 'cuda' if torch.cuda.is_available() and config.use_cuda else 'cpu'
 
         # Models
         self.net = None
         self.optimizer = None
-        self.criterion = torch.nn.BCEWithLogitsLoss()
+        pos_weight = torch.FloatTensor([config.pos_weight])
+        if self.device == 'cuda':
+            pos_weight = torch.cuda.FloatTensor([config.pos_weight])
+        self.criterion = torch.nn.BCEWithLogitsLoss(pos_weight = pos_weight)
         self.model_type = config.model_type
 
         # Hyper-parameters
@@ -41,7 +45,7 @@ class training(object):
         self.result_path = config.result_path
         self.mode = config.mode
 
-        self.device = 'cuda'#torch.device('cuda' if torch.cuda.is_available() and config.use_cuda else 'cpu')
+
         self.build_model()
 
     def build_model(self):

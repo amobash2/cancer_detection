@@ -85,6 +85,8 @@ if __name__ == '__main__':
     parser.add_argument('--beta1', type=float, default=0.9)        # momentum1 in Adam
     parser.add_argument('--beta2', type=float, default=0.99)      # momentum2 in Adam    
     parser.add_argument('--augmentation_prob', type=float, default=0.4)
+    parser.add_argument('--classification_threshold',type=float, default=0.5)
+    parser.add_argument('--pos_weight',type=float,default=1.5)
 
     parser.add_argument('--model_type',type=str,default='ResNet',help='ResNet/DenseNet/VGG')
     parser.add_argument('--image_size',type=int, default=224)
@@ -92,6 +94,7 @@ if __name__ == '__main__':
     parser.add_argument('--num_epochs', type=int, default=100)
     parser.add_argument('--num_epochs_decay', type=int, default=70)
     parser.add_argument('--use_cuda',type=bool, default=True)
+
 
     config = parser.parse_args()
     print(config)
