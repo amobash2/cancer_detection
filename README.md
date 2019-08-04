@@ -9,7 +9,7 @@ We are using [PCam dataset](https://github.com/basveeling/pcam) to train/validat
 
 ![alt text](https://github.com/basveeling/pcam/blob/master/pcam.jpg "PCam image samples - image is copied from PCam github")
 
-We randomly select 20% of images from PCam dataset for testing and report all measurements on selected data. We divide remainder of data into 80% training and 20% validation. We have not observed any noticable difference using 75% training and 25% validation, however we are open to share our pretrained models in both scenarios. We utilize data augmentation such as rotation, vertical and horizontal and color jittering to improve stability of models.
+We randomly select 20% of images from PCam dataset for testing and report all measurements on selected data. We divide remainder of data into 80% training and 20% validation. We have not observed any noticable difference using 75% training and 25% validation, however we are open to share our pretrained models in both scenarios. We utilize data augmentation such as random rotations with different range of degrees, vertical and horizontal flips and color jittering to improve stability of models.
 
 ## How to use our scripts?
 This section and all scripts will be shared by the time of GHC 2019 conference. The content will be divided as follows:
