@@ -10,6 +10,7 @@ from torch.autograd import Variable
 import torch.nn.functional as F
 import copy
 from sklearn.metrics import accuracy_score, roc_auc_score, f1_score, classification_report, confusion_matrix
+from statistics import mean
 
 
 class training(object):
@@ -33,6 +34,7 @@ class training(object):
         self.num_epochs = config.num_epochs
         self.batch_size = config.batch_size
         self.num_epochs_decay = config.num_epochs_decay
+        self.classification_threshold = config.classification_threshold
 
         # Path
         self.model_path = config.model_path
@@ -80,7 +82,8 @@ class training(object):
 
         #====================================== Training ===========================================#
         #===========================================================================================#
-        loss_data = pd.DataFrame()
+        loss_data_perstep = pd.DataFrame()
+        loss_data_perepoch = pd.DataFrame()
         lr = self.lr
             
         for epoch in range(self.num_epochs):
@@ -94,7 +97,8 @@ class training(object):
                 samples = 0
                 loss_sum = 0
                 correct_sum = 0
-                all_f1 = all_tn = all_fp = all_fn = all_tp = 0
+                all_tn = all_fp = all_fn = all_tp = 0
+                all_f1 = []
                 for j, batch in enumerate(self.data_loader[phase]):
                     X = batch["image"]
                     labels = batch["label"]
@@ -117,9 +121,9 @@ class training(object):
 
                         loss_sum += loss.item() * X.shape[0] # We need to multiple by batch size as loss is the mean loss of the samples in the batch
                         samples += X.shape[0]
-                        this_f1 = f1_score(labels.view(-1, 1).float().cpu(), (y >= 0.5).float().cpu()) 
-                        tn, fp, fn, tp = confusion_matrix(labels.view(-1, 1).float().cpu(), (y >= 0.5).float().cpu()).ravel()
-                        all_f1 += this_f1
+                        tn, fp, fn, tp = confusion_matrix(labels.view(-1, 1).float().cpu(), (y >= self.classification_threshold).float().cpu()).ravel()
+                        this_f1 = 2.0*tp/(2.0*tp + fp + fn + 1e-6) 
+                        all_f1.append(this_f1)
                         all_tn += tn
                         all_fp += fp
                         all_fn += fn
@@ -135,18 +139,18 @@ class training(object):
                                 j + 1, 
                                 round(float(loss_sum) / float(samples), 3), 
                                 round(float(correct_sum) / float(samples), 3),
-                                round(float(all_f1) / float(samples), 3),
+                                round(float(mean(all_f1)), 3),
                                 round(float(all_tn) / float(samples), 3),
                                 round(float(all_fp) / float(samples), 3),
                                 round(float(all_fn) / float(samples), 3),
                                 round(float(all_tp) / float(samples), 3)
                             ))
-                            loss_data = loss_data.append({'phase': phase,
+                            loss_data_perstep = loss_data_perstep.append({'phase': phase,
                                                             'epoch': epoch+1,
                                                             'step': j+1,
                                                             'loss': round(float(loss_sum) / float(samples), 3),
                                                             'acc': round(float(correct_sum) / float(samples), 3),
-                                                            'f1': round(float(all_f1) / float(samples), 3),
+                                                            'f1': round(float(mean(all_f1)), 3),
                                                             'tn': round(float(all_tn) / float(samples), 3),
                                                             'fp': round(float(all_fp) / float(samples), 3),
                                                             'fn': round(float(all_fn) / float(samples), 3),
@@ -155,7 +159,7 @@ class training(object):
                 # Print epoch statistics
                 epoch_acc = float(correct_sum) / float(samples)
                 epoch_loss = float(loss_sum) / float(samples)
-                epoch_f1 = float(all_f1) / float(samples)
+                epoch_f1 = float(mean(all_f1))
                 epoch_tn = float(all_tn) / float(samples)
                 epoch_fp = float(all_fp) / float(samples)
                 epoch_fn = float(all_fn) / float(samples)
@@ -163,9 +167,8 @@ class training(object):
                 print("epoch: {} - {} loss: {}, {} acc: {}, f1: {}, tn: {}, fp: {}, fn: {}, tp: {}".format(epoch + 1, phase, round(epoch_loss, 3),\
                      phase, round(epoch_acc, 3), round(epoch_f1, 3), round(epoch_tn, 3) \
                          , round(epoch_fp, 3), round(epoch_fn, 3), round(epoch_tp, 3)))
-                loss_data = loss_data.append({'phase': phase,
+                loss_data_perepoch = loss_data_perepoch.append({'phase': phase,
                                 'epoch': epoch+1,
-                                'step': -1,
                                 'loss': round(float(loss_sum) / float(samples), 3),
                                 'acc': round(float(correct_sum) / float(samples), 3),
                                 'f1': round(float(all_f1) / float(samples), 3),
@@ -181,7 +184,8 @@ class training(object):
                         torch.save(best_model_wts, os.path.join(self.model_path,"BEST_{}_{}.pth".format(self.model_type, epoch)))
 
                 torch.save(copy.deepcopy(self.net.state_dict()), os.path.join(self.model_path,"{}_{}.pth".format(self.model_type, epoch)))
-                loss_data.to_csv(os.path.join(self.result_path,"result.csv"))
+                loss_data_perstep.to_csv(os.path.join(self.result_path,"loss_data_perstep.csv"))
+                loss_data_perepoch.to_csv(os.path.join(self.result_path,"loss_data_perepoch.csv"))
 
 
                 # Decay learning rate
